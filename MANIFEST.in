@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include offline_update *.css
+recursive-include offline_update *.csv
+recursive-include offline_update *.html
+recursive-include offline_update *.ico
+recursive-include offline_update *.js
+recursive-include offline_update *.json
+recursive-include offline_update *.md
+recursive-include offline_update *.png
+recursive-include offline_update *.py
+recursive-include offline_update *.svg
+recursive-include offline_update *.txt
+recursive-exclude offline_update *.pyc
