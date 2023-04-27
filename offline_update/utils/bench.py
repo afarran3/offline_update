@@ -193,9 +193,9 @@ def migrate_env(python, backup=False):
 		rredis = urlparse(config["redis_cache"])
 		redis = f"{which('redis-cli')} -p {rredis.port}"
 
-		logger.log("Clearing Redis Cache...")
+		# logger.log("Clearing Redis Cache...")
 		exec_cmd(f"{redis} FLUSHALL")
-		logger.log("Clearing Redis DataBase...")
+		# logger.log("Clearing Redis DataBase...")
 		exec_cmd(f"{redis} FLUSHDB")
 	except Exception:
 		logger.warning("Please ensure Redis Connections are running or Daemonized.")
@@ -210,7 +210,7 @@ def migrate_env(python, backup=False):
 		source = os.path.join(path, "env")
 		target = parch
 
-		logger.log("Backing up Virtual Environment")
+		# logger.log("Backing up Virtual Environment")
 		stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 		dest = os.path.join(path, str(stamp))
 
@@ -223,7 +223,7 @@ def migrate_env(python, backup=False):
 		exec_cmd(f"{pvenv}/bin/python -m pip install --upgrade {app_path}")
 
 	try:
-		logger.log(f"Setting up a New Virtual {python} Environment")
+		# logger.log(f"Setting up a New Virtual {python} Environment")
 		exec_cmd(f"{python} -m venv {pvenv}")
 
 		# Install frappe first
@@ -232,7 +232,7 @@ def migrate_env(python, backup=False):
 			if str(app) != "frappe":
 				_install_app(app)
 
-		logger.log(f"Migration Successful to {python}")
+		# logger.log(f"Migration Successful to {python}")
 	except Exception:
 		logger.warning("Python env migration Error", exc_info=True)
 		raise
@@ -522,7 +522,7 @@ def remove_backups_crontab(bench_path=get_bench_path()):
 
 	from offline_update.bench import Bench
 
-	logger.log("removing backup cronjob")
+	# logger.log("removing backup cronjob")
 
 	bench_dir = os.path.abspath(bench_path)
 	user = Bench(bench_dir).conf.get("frappe_user")

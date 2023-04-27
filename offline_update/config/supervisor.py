@@ -106,7 +106,7 @@ def check_supervisord_config(user=None):
 	supervisord_conf_changes = ""
 
 	if not supervisord_conf:
-		logger.log("supervisord.conf not found")
+		# logger.log("supervisord.conf not found")
 		return
 
 	config = configparser.ConfigParser()
@@ -115,7 +115,7 @@ def check_supervisord_config(user=None):
 	if section not in config.sections():
 		config.add_section(section)
 		action = f"Section {section} Added"
-		logger.log(action)
+		# logger.log(action)
 		supervisord_conf_changes += "\n" + action
 
 	for key, value in updated_values.items():
@@ -129,7 +129,7 @@ def check_supervisord_config(user=None):
 			action = (
 				f"Updated supervisord.conf: '{key}' changed from '{current_value}' to '{value}'"
 			)
-			logger.log(action)
+			# logger.log(action)
 			supervisord_conf_changes += "\n" + action
 
 	if not supervisord_conf_changes:

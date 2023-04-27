@@ -96,7 +96,7 @@ class Bench(Base, Validator):
 		return [
 			path
 			for path in os.listdir(os.path.join(self.name, "sites"))
-			if os.path.exists(os.path.join("sites", path, "site_config.json"))
+			if os.path.exists(os.path.join(self.name, "sites", path, "site_config.json"))
 		]
 
 	@property
@@ -427,7 +427,7 @@ class BenchSetup(Base):
 	@step(title="Setting Up Backups Cronjob", success="Backups Cronjob Set Up")
 	def backups(self):
 		# TODO: to something better for logging data? - maybe a wrapper that auto-logs with more context
-		logger.log("setting up backups")
+		# logger.log("setting up backups")
 
 		from crontab import CronTab
 
@@ -445,7 +445,7 @@ class BenchSetup(Base):
 			job.every(6).hours()
 			system_crontab.write()
 
-		logger.log("backups were set up")
+		# logger.log("backups were set up")
 
 	@job(title="Setting Up Bench Dependencies", success="Bench Dependencies Set Up")
 	def requirements(self, apps=None):

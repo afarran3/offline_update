@@ -189,7 +189,7 @@ class App(AppMeta):
 
 		fetch_txt = f"Getting {self.repo}"
 		click.secho(fetch_txt, fg="yellow")
-		logger.log(fetch_txt)
+		# logger.log(fetch_txt)
 
 		self.bench.run(
 			f"{cmd} {args}",
@@ -316,7 +316,7 @@ def get_excluded_apps(bench_path=get_bench_path()):
 def add_to_excluded_apps_txt(app, bench_path=get_bench_path()):
 	if app == "frappe":
 		raise ValueError("Frappe app cannot be excludeed from update")
-	if app not in os.listdir("apps"):
+	if app not in os.listdir(os.path.join(bench_path, "apps")):
 		raise ValueError(f"The app {app} does not exist")
 	apps = get_excluded_apps(bench_path=bench_path)
 	if app not in apps:
@@ -536,7 +536,7 @@ def new_app(app, no_git=None, bench_path=get_bench_path()):
 			return
 		args.append(no_git)
 
-	logger.log(f"creating new app {app}")
+	# logger.log(f"creating new app {app}")
 	run_frappe_cmd(*args, bench_path=bench_path)
 	install_app(app, bench_path=bench_path)
 
@@ -556,7 +556,7 @@ def install_app(
 
 	install_text = f"Installing {app}"
 	click.secho(install_text, fg="yellow")
-	logger.log(install_text)
+	# logger.log(install_text)
 
 	if resolution == UNSET_ARG:
 		resolution = []
@@ -651,7 +651,7 @@ Here are your choices:
 					bench.run(f"git fetch {remote} --unshallow", cwd=app_dir)
 
 			branch = get_current_branch(app, bench_path=bench_path)
-			logger.log(f"pulling {app}")
+			# logger.log(f"pulling {app}")
 			if reset:
 				reset_cmd = f"git reset --hard {remote}/{branch}"
 				if bench.conf.get("shallow_clone"):

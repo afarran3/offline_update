@@ -238,11 +238,12 @@ def run_frappe_cmd(*args, **kwargs):
 	f = get_env_cmd("python", bench_path=bench_path)
 	sites_dir = os.path.join(bench_path, "sites")
 
-	is_async = not from_command_line
-	if is_async:
-		stderr = stdout = subprocess.PIPE
-	else:
-		stderr = stdout = None
+	# is_async = False
+	# print("is_async == ", is_async)
+	# if is_async:
+	# 	stderr = stdout = subprocess.PIPE
+	# else:
+	stderr = stdout = None
 
 	p = subprocess.Popen(
 		(f, "-m", "frappe.utils.bench_helper", "frappe") + args,
@@ -251,7 +252,8 @@ def run_frappe_cmd(*args, **kwargs):
 		stderr=stderr,
 	)
 
-	return_code = print_output(p) if is_async else p.wait()
+	# return_code = print_output(p) if is_async else p.wait()
+	return_code = p.wait()
 	if return_code > 0:
 		sys.exit(return_code)
 
@@ -282,8 +284,8 @@ def print_output(p):
 
 def log_line(data, stream):
 	if stream == "stderr":
-		return sys.stderr.write(data)
-	return sys.stdout.write(data)
+		return sys.stderr.write(data.decode('utf-8'))
+	return sys.stdout.write(data.decode('utf-8'))
 
 
 def get_bench_name(bench_path):

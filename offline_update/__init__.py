@@ -2,7 +2,7 @@
 __version__ = '1.0.0'
 
 VERSION = "1.0.0"
-PROJECT_NAME = "frappe-bench"
+PROJECT_NAME = "offline_update"
 FRAPPE_VERSION = None
 current_path = None
 updated_path = None
