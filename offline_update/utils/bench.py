@@ -128,7 +128,7 @@ def update_yarn_packages(bench_path=get_bench_path(), apps=None):
 		app_path = os.path.join(apps_dir, app)
 		if os.path.exists(os.path.join(app_path, "package.json")):
 			click.secho(f"\nInstalling node dependencies for {app}", fg="yellow")
-			bench.run("yarn install", cwd=app_path)
+			bench.run("yarn install --offline", cwd=app_path)
 
 
 def update_npm_packages(bench_path=get_bench_path(), apps=None):

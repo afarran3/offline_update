@@ -553,6 +553,7 @@ def install_app(
 ):
 	import offline_update.cli as bench_cli
 	from offline_update.bench import Bench
+	from offline_update import dirs
 
 	install_text = f"Installing {app}"
 	click.secho(install_text, fg="yellow")
@@ -571,14 +572,14 @@ def install_app(
 	app_path = os.path.realpath(os.path.join(bench_path, "apps", app))
 
 	bench.run(
-		f"{bench.python} -m pip install {quiet_flag} --upgrade -e {app_path} {cache_flag}"
+		f"{bench.python} -m pip install {quiet_flag} --upgrade -e {app_path} --find-links={dirs['pip_dir']} {cache_flag}"
 	)
 
 	if conf.get("developer_mode"):
 		install_python_dev_dependencies(apps=app, bench_path=bench_path, verbose=verbose)
 
 	if os.path.exists(os.path.join(app_path, "package.json")):
-		bench.run("yarn install", cwd=app_path)
+		bench.run("yarn install --offline", cwd=app_path)
 
 	bench.apps.sync(app_name=app, required=resolution, branch=tag, app_dir=app_path)
 

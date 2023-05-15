@@ -8,6 +8,12 @@ current_path = None
 updated_path = None
 LOG_BUFFER = []
 from frappe.utils import get_bench_path
+import os
+
+dirs = {
+	'pip_dir': os.path.join(get_bench_path(), "pip_lib"),
+	'yarn_dir': os.path.join(get_bench_path(), "yarn_lib")
+}
 
 def set_frappe_version(bench_path=get_bench_path()):
     

@@ -391,12 +391,13 @@ class BenchSetup(Base):
 	def pip(self, verbose=False):
 		"""Updates env pip; assumes that env is setup"""
 		import offline_update.cli
+		from offline_update import dirs
 
 		verbose = offline_update.cli.verbose or verbose
 		quiet_flag = "" if verbose else "--quiet"
 
 		return self.run(
-			f"{self.bench.python} -m pip install {quiet_flag} --upgrade pip", cwd=self.bench.name
+			f"{self.bench.python} -m pip install {quiet_flag} --no-index --upgrade pip --find-links={dirs['pip_dir']}", cwd=self.bench.name
 		)
 
 	@step(title="Installing wheel", success="Installed wheel")

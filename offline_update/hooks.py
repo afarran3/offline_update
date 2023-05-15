@@ -64,7 +64,7 @@ app_license = "MIT"
 # ------------
 
 # before_install = "offline_update.install.before_install"
-# after_install = "offline_update.install.after_install"
+after_install = "offline_update.install.after_install"
 
 # Uninstallation
 # ------------
