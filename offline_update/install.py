@@ -6,7 +6,7 @@ from frappe.utils import get_bench_path  # noqa
 from offline_update import dirs
 
 def after_install():
-    download_reqs(bench_apps, dirs)
+    download_reqs(Bench(get_bench_path()).apps, dirs)
 
 
 def download_reqs(bench_apps, dirs):
