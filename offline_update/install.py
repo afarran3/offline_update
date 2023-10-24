@@ -45,13 +45,15 @@ def cllect_libs_names(dirs):
             path = os.path.join(get_bench_path(), 'apps', app)
             if os.path.isfile(os.path.join(path, 'requirements.txt')):
                 with open(os.path.join(path, 'requirements.txt'), 'r') as req:
-                    dep = req.readline().strip()
-                    if dep not in [
-                        'frappe',
-                        'erpnext',
-                        "# frappe -- https://github.com/frappe/frappe is installed via 'bench init'"
-                    ]:
-                        pip_req.writelines([dep, '\n'])
+                    deps = req.readlines()
+                    for dep in deps:
+                        dep = dep.strip()
+                        if dep not in [
+                            'frappe',
+                            'erpnext',
+                            "# frappe -- https://github.com/frappe/frappe is installed via 'bench init'"
+                        ]:
+                            pip_req.writelines([dep, '\n'])
             elif os.path.isfile(os.path.join(path, 'pyproject.toml')):
                 try:
                     from tomli import load
