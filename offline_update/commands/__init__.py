@@ -45,12 +45,17 @@ def bench_command(bench_path=get_bench_path()):
 
 
 @click.command("d-reqs", help="Download all python and node requirements run after online update immediately while you still have internet connection to update offline libraries.")
+@click.option("--no-cache", is_flag=True, help="Disable the cache for pip.")
 @pass_context
-def download_reqs(context):
+def download_reqs(context, no_cache):
 	from offline_update.install import download_reqs
 	from offline_update.bench import Bench
-	
-	download_reqs(Bench(get_bench_path()).apps, dirs)
+ 
+	download_reqs(
+    	Bench(get_bench_path()).apps,
+    	dirs,
+    	no_cache=no_cache
+    )
 
 
 @click.command("offline-update", help="Trigger Offline Update")
