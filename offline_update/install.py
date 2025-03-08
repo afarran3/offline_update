@@ -4,13 +4,22 @@ import os
 from frappe.utils import get_bench_path  # noqa
 
 from offline_update import dirs
+from offline_update.utils import exec_cmd, which
+import click
+
+import re
 
 def after_install():
     download_reqs(Bench(get_bench_path()).apps, dirs)
 
 
-def download_reqs(bench_apps, dirs):
-    cllect_libs_names(dirs)
+def download_reqs(
+    bench_apps,
+    dirs,
+    no_cache=False,
+):
+    collect_libs_names(dirs)
+    cache_flag = "--no-cache-dir" if no_cache else ""
     if have_internet('8.8.8.8') or have_internet('google.com'):
         print(f"Downloading 'pip' Packages.....")
         subprocess.call(
@@ -22,17 +31,17 @@ def download_reqs(bench_apps, dirs):
             path = os.path.join(get_bench_path(), 'apps', app)
             if os.path.isfile(os.path.join(path, 'yarn.lock')):
                 os.remove(os.path.join(path, 'yarn.lock'))
-                print(f"Downloading {app} 'Node' Packages.....")
-                subprocess.call(
-                        "yarn install",
-                        shell=True,
-                        cwd=path
-                )
+            click.secho(f"Downloading {app} 'Node' Packages.....", fg="yellow")
+            exec_cmd(
+                    "yarn install",
+                    cwd=path
+            )
     else:
-        print("You don't have internet connection to download requirements libraries.")
+        click.secho("You don't have internet connection to download requirements libraries.", fg="red")
+        
 
 
-def cllect_libs_names(dirs):
+def collect_libs_names(dirs):
     check_dirs(dirs)
     bench = Bench(get_bench_path())
     bench_apps = bench.apps
@@ -45,15 +54,13 @@ def cllect_libs_names(dirs):
             path = os.path.join(get_bench_path(), 'apps', app)
             if os.path.isfile(os.path.join(path, 'requirements.txt')):
                 with open(os.path.join(path, 'requirements.txt'), 'r') as req:
-                    deps = req.readlines()
-                    for dep in deps:
-                        dep = dep.strip()
-                        if dep not in [
-                            'frappe',
-                            'erpnext',
-                            "# frappe -- https://github.com/frappe/frappe is installed via 'bench init'"
-                        ]:
-                            pip_req.writelines([dep, '\n'])
+                    dep = req.readline().strip()
+                    if re.split(r'[~|<|>|=|\n]', dep)[0] not in [
+                        'frappe',
+                        'erpnext',
+                        "# frappe -- https://github.com/frappe/frappe is installed via 'bench init'"
+                    ]:
+                        pip_req.writelines([dep, '\n'])
             elif os.path.isfile(os.path.join(path, 'pyproject.toml')):
                 try:
                     from tomli import load
@@ -80,10 +87,28 @@ def cllect_libs_names(dirs):
             for k,v in dev_dependencies.items():
                 pip_req.writelines([k + v, '\n'])
 
-    subprocess.call(
-            f"yarn --offline config set yarn-offline-mirror {dirs['yarn_dir']}",
-            shell=True
+    exec_cmd(
+            f"yarn --offline config set yarn-offline-mirror {dirs['yarn_dir']}"
     )
+    with open(os.path.join(dirs['pip_dir'], 'pip_requirements.txt')) as f:
+        reqs1 = set()
+        reqs2 = set()
+        for line in f:        
+            line_lower = line.lower()
+            req = re.split(r'[~|<|>|=|\n]', line_lower)
+            if (
+                req[0] in [re.split(r'[~|<|>|=|\n]', l)[0] for l in reqs1]
+            ):
+                if not req[0] in [re.split(r'[~|<|>|=|\n]', l)[0] for l in reqs2]:
+                    reqs2.add(line_lower)
+            else:
+                reqs1.add(line_lower)
+    with open(os.path.join(dirs['pip_dir'], 'pip_requirements.txt'), 'w+') as f:
+        for i in reqs1:
+            f.write(i)
+    with open(os.path.join(dirs['pip_dir'], 'pip_requirements2.txt'), 'w+') as f2:
+        for i in reqs2:
+            f2.write(i)
 
 
 def have_internet(host):
