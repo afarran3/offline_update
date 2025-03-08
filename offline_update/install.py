@@ -14,7 +14,7 @@ def download_reqs(bench_apps, dirs):
     if have_internet('8.8.8.8') or have_internet('google.com'):
         print(f"Downloading 'pip' Packages.....")
         subprocess.call(
-                f"pip download -d {dirs['pip_dir']} -r {os.path.join(dirs['pip_dir'], 'pip_requirements.txt')}",
+                f"pip download -d {dirs['pip_dir']} --use-deprecated=legacy-resolver -r {os.path.join(dirs['pip_dir'], 'pip_requirements.txt')}",
                 shell=True
         )
 
@@ -61,12 +61,15 @@ def cllect_libs_names(dirs):
                     from tomllib import load
                 with open(os.path.join(path, 'pyproject.toml'), 'rb') as req:
                     toml_dict = load(req)
-                    for dep in list(toml_dict.get("project", {}).get("dependencies")):
-                        proj_dependencies.append(dep.split(",")[0])
-                    for dep in list(toml_dict.get("build-system", {}).get("requires")):
-                        requires.append(dep.split(",")[0])
-                    for k, v in toml_dict.get("tool", {}).get("bench",{}).get("dev-dependencies", {}).items():
-                        dev_dependencies[k] = v
+                    if toml_dict.get("project", {}).get("dependencies"):
+                        for dep in list(toml_dict.get("project", {}).get("dependencies")):
+                            proj_dependencies.append(dep.split(",")[0])
+                    if toml_dict.get("build-system", {}).get("requires"):
+                        for dep in list(toml_dict.get("build-system", {}).get("requires")):
+                            requires.append(dep.split(",")[0])
+                    if toml_dict.get("tool", {}).get("bench",{}).get("dev-dependencies", {}):
+                        for k, v in toml_dict.get("tool", {}).get("bench",{}).get("dev-dependencies", {}).items():
+                            dev_dependencies[k] = v
         if proj_dependencies:
             for v in proj_dependencies:
                 pip_req.writelines([v, '\n'])
